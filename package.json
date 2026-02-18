@@ -1,7 +1,13 @@
 {
-  "name": "nuxt-app",
-  "private": true,
+  "name": "scandinavian-ssn-generator",
+  "version": "1.0.0",
+  "description": "A Scandinavian SSN generator and validator built with Nuxt 4.",
+  "author": "Idrees Samadi",
+  "license": "Apache-2.0",
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
