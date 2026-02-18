@@ -1,0 +1,6 @@
+# START nuxt-robots (indexable)
+User-agent: *
+Disallow:
+
+Sitemap: https://idreessamadi.github.io/scandinavian-ssn-generator/sitemap.xml
+# END nuxt-robots

@@ -1,0 +1,43 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "preview": "nuxt preview",
+    "generate": "nuxt generate",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "nuxt typecheck",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:unit": "vitest --project unit",
+    "test:nuxt": "vitest --project nuxt"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.89",
+    "@iconify-json/simple-icons": "^1.2.70",
+    "@internationalized/date": "^3.11.0",
+    "@nuxt/a11y": "1.0.0-alpha.1",
+    "@nuxt/scripts": "0.13.2",
+    "@nuxt/test-utils": "4.0.0",
+    "@nuxt/ui": "^4.4.0",
+    "@nuxtjs/robots": "5.7.0",
+    "@nuxtjs/sitemap": "7.6.0",
+    "@vueuse/core": "^14.2.1",
+    "nordic-id-validator": "^1.1.0",
+    "nuxt": "^4.3.1",
+    "tailwindcss": "^4.1.18"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "^1.14.0",
+    "@vue/test-utils": "^2.4.6",
+    "eslint": "^10.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18",
+    "vue-tsc": "^3.2.4"
+  },
+  "packageManager": "pnpm@10.29.2"
+}
