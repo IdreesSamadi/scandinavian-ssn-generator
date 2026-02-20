@@ -148,6 +148,6 @@ useSeoMeta({
   title: 'Icelandic national identification number (Kennitala) Generator and Validator',
   description: 'Generate and validate Icelandic national identification number (Kennitala) with ease using this online tool. Generate fake Icelandic social security numbers (Kennitala) for testing purposes and validate real ones to ensure they are correctly formatted. ',
   ogTitle: 'Icelandic national identification number (Kennitala) Generator and Validator',
-  ogDescription: 'Generate and validate Icelandic national identification number (Kennitala) with ease using this online tool. Generate fake Icelandic social security numbers (Kennitala) for testing purposes and validate real ones to ensure they are correctly formatted.',
+  ogDescription: 'Generate and validate Icelandic national identification number (Kennitala) with ease using this online tool. Generate fake Icelandic social security numbers (Kennitala) for testing purposes and validate real ones to ensure they are correctly formatted.'
 })
 </script>
