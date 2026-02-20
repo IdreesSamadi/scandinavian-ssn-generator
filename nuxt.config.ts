@@ -20,7 +20,8 @@ export default defineNuxtConfig({
       title: 'Scandinavian Countries SSN Generator and Validator',
       meta: [
         { name: 'description', content: 'Generate and validate Scandinavian countries SSNs with ease using this online tool.' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { name: 'google-site-verification', content: 'P9B2nNydyu8cDuKEkvMB-tSzKLiOJz7LZnT5ZuGa99g' }
       ],
       link: [
         { rel: 'icon', href: '/favicon.ico' }
@@ -48,8 +49,8 @@ export default defineNuxtConfig({
   eslint: {
     config: {
       stylistic: {
-        commaDangle: 'always',
-        braceStyle: '1tbs'
+        braceStyle: '1tbs',
+        semi: true
       }
     }
   },

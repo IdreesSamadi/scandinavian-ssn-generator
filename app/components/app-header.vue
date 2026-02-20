@@ -43,27 +43,27 @@ const items = computed<NavigationMenuItem[]>(() => [
   {
     label: 'Sweden ',
     to: '/sweden',
-    active: route.path.startsWith('/sweden'),
+    active: route.path.startsWith('/sweden')
   },
   {
     label: 'Denmark',
     to: '/denmark',
-    active: route.path.startsWith('/denmark'),
+    active: route.path.startsWith('/denmark')
   },
   {
     label: 'Norway',
     to: '/norway',
-    active: route.path.startsWith('/norway'),
+    active: route.path.startsWith('/norway')
   },
   {
     label: 'Finland',
     to: '/finland',
-    active: route.path.startsWith('/finland'),
+    active: route.path.startsWith('/finland')
   },
   {
     label: 'Iceland',
     to: '/iceland',
-    active: route.path.startsWith('/iceland'),
-  },
+    active: route.path.startsWith('/iceland')
+  }
 ])
 </script>

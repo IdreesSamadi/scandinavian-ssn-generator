@@ -2,5 +2,16 @@
 import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
-  // Your custom configs here
+  {
+    rules: {
+      'comma-dangle': ['error', 'never'],
+      '@stylistic/comma-dangle': ['error', 'never']
+    }
+  },
+  {
+    files: ['**/*.vue'],
+    rules: {
+      'vue/comma-dangle': ['error', 'never']
+    }
+  }
 )
