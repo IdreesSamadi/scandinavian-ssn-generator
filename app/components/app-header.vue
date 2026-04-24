@@ -35,9 +35,9 @@
 </template>
 
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
+import type { NavigationMenuItem } from '@nuxt/ui';
 
-const route = useRoute()
+const route = useRoute();
 
 const items = computed<NavigationMenuItem[]>(() => [
   {
@@ -65,5 +65,5 @@ const items = computed<NavigationMenuItem[]>(() => [
     to: '/iceland',
     active: route.path.startsWith('/iceland')
   }
-])
+]);
 </script>

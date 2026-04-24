@@ -32,14 +32,14 @@
 </template>
 
 <script setup lang="ts">
-import Validator from 'nordic-id-validator'
-import type { formData } from '~/components/generator-form.vue'
+import Validator from 'nordic-id-validator';
+import type { formData } from '~/components/generator-form.vue';
 
-const formats = ['YYMMDD-NNNN', 'YYYYMMDD-NNNN', 'YYMMDDNNNN', 'YYYYMMDDNNNN']
-const format = ref('YYYYMMDD-NNNN')
+const formats = ['YYMMDD-NNNN', 'YYYYMMDD-NNNN', 'YYMMDDNNNN', 'YYYYMMDDNNNN'];
+const format = ref('YYYYMMDD-NNNN');
 
-const output = ref('')
-const isValid = ref(true)
+const output = ref('');
+const isValid = ref(true);
 /**
  * Generates a Swedish personal identity number (Personnummer) based on the provided date of birth and gender digit. The function uses the Luhn algorithm to calculate the check digit, ensuring that the generated number is valid according to Swedish standards.
  * @see https://en.wikipedia.org/wiki/Luhn_algorithm
@@ -48,55 +48,55 @@ const isValid = ref(true)
  * @returns 12-digit personal identity number with a valid check digit
  */
 const generatePersonnummer = (dob: string, genderDigit: number): string => {
-  const controlDigits = randomDigit(2)
-  const formatted = `${dob}${controlDigits}${genderDigit}`
+  const controlDigits = randomDigit(2);
+  const formatted = `${dob}${controlDigits}${genderDigit}`;
 
-  const ssn = formatted.slice(-9) // Get the last 9 digits for Luhn calculation
-  let sum = 0
+  const ssn = formatted.slice(-9); // Get the last 9 digits for Luhn calculation
+  let sum = 0;
 
   for (let i = 0; i < ssn.length; i++) {
-    let digit = parseInt(ssn[i]!)
+    let digit = parseInt(ssn[i]!);
 
     if (i % 2 === 0) {
-      digit *= 2
-      if (digit > 9) digit -= 9
+      digit *= 2;
+      if (digit > 9) digit -= 9;
     }
 
-    sum += digit
+    sum += digit;
   }
 
-  const checkDigit = (10 - (sum % 10)) % 10
-  return `${formatted}${checkDigit}`
-}
+  const checkDigit = (10 - (sum % 10)) % 10;
+  return `${formatted}${checkDigit}`;
+};
 
 const handleChange = ({ dateOfBirth, genderDigit }: formData) => {
-  const ssn = generatePersonnummer(dateOfBirth.replace(/-/g, ''), genderDigit)
+  const ssn = generatePersonnummer(dateOfBirth.replace(/-/g, ''), genderDigit);
 
   switch (format.value) {
     case 'YYMMDD-NNNN':
-      output.value = `${ssn.slice(2, 8)}-${ssn.slice(8)}`
-      break
+      output.value = `${ssn.slice(2, 8)}-${ssn.slice(8)}`;
+      break;
     case 'YYYYMMDD-NNNN':
-      output.value = `${ssn.slice(0, 8)}-${ssn.slice(8)}`
-      break
+      output.value = `${ssn.slice(0, 8)}-${ssn.slice(8)}`;
+      break;
     case 'YYMMDDNNNN':
-      output.value = `${ssn.slice(2)}`
-      break
+      output.value = `${ssn.slice(2)}`;
+      break;
     case 'YYYYMMDDNNNN':
-      output.value = ssn
-      break
+      output.value = ssn;
+      break;
   }
-}
+};
 
-const validator = new Validator()
+const validator = new Validator();
 watch(output, (newValue) => {
-  isValid.value = validator.isValid(newValue.replace(/[-+A]/g, ''), 'SE')
-})
+  isValid.value = validator.isValid(newValue.replace(/[-+A]/g, ''), 'SE');
+});
 
 useSeoMeta({
   title: 'Sweden social security number (Personnummer) Generator and Validator',
   description: 'Generate and validate Swedish identity number (Personnummer) with ease using this online tool. Fake Personnummer generator and validator for testing purposes.',
   ogTitle: 'Sweden social security number (Personnummer) Generator and Validator',
   ogDescription: 'Generate and validate Swedish identity number (Personnummer) with ease using this online tool. Fake Personnummer generator and validator for testing purposes.'
-})
+});
 </script>
