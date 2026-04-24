@@ -32,103 +32,103 @@
 </template>
 
 <script setup lang="ts">
-import Validator from 'nordic-id-validator'
-import type { formData } from '~/components/generator-form.vue'
+import Validator from 'nordic-id-validator';
+import type { formData } from '~/components/generator-form.vue';
 
-const formats = ['DDMMYY-NNNNN', 'DDMMYYNNNNN']
-const format = ref('DDMMYY-NNNNN')
+const formats = ['DDMMYY-NNNNN', 'DDMMYYNNNNN'];
+const format = ref('DDMMYY-NNNNN');
 
-const output = ref('')
-const isValid = ref(true)
+const output = ref('');
+const isValid = ref(true);
 
-const centuryMap: Map<string, number> = new Map()
-centuryMap.set('F', 2000)
-centuryMap.set('E', 2000)
-centuryMap.set('D', 2000)
-centuryMap.set('C', 2000)
-centuryMap.set('B', 2000)
-centuryMap.set('A', 2000)
-centuryMap.set('U', 1900)
-centuryMap.set('V', 1900)
-centuryMap.set('W', 1900)
-centuryMap.set('X', 1900)
-centuryMap.set('Y', 1900)
-centuryMap.set('-', 1900)
-centuryMap.set('+', 1800)
+const centuryMap: Map<string, number> = new Map();
+centuryMap.set('F', 2000);
+centuryMap.set('E', 2000);
+centuryMap.set('D', 2000);
+centuryMap.set('C', 2000);
+centuryMap.set('B', 2000);
+centuryMap.set('A', 2000);
+centuryMap.set('U', 1900);
+centuryMap.set('V', 1900);
+centuryMap.set('W', 1900);
+centuryMap.set('X', 1900);
+centuryMap.set('Y', 1900);
+centuryMap.set('-', 1900);
+centuryMap.set('+', 1800);
 
-const daysInMonthMap: Map<string, number> = new Map()
-daysInMonthMap.set('01', 31)
-daysInMonthMap.set('02', 28)
-daysInMonthMap.set('03', 31)
-daysInMonthMap.set('04', 30)
-daysInMonthMap.set('05', 31)
-daysInMonthMap.set('06', 30)
-daysInMonthMap.set('07', 31)
-daysInMonthMap.set('08', 31)
-daysInMonthMap.set('09', 30)
-daysInMonthMap.set('10', 31)
-daysInMonthMap.set('11', 30)
-daysInMonthMap.set('12', 31)
+const daysInMonthMap: Map<string, number> = new Map();
+daysInMonthMap.set('01', 31);
+daysInMonthMap.set('02', 28);
+daysInMonthMap.set('03', 31);
+daysInMonthMap.set('04', 30);
+daysInMonthMap.set('05', 31);
+daysInMonthMap.set('06', 30);
+daysInMonthMap.set('07', 31);
+daysInMonthMap.set('08', 31);
+daysInMonthMap.set('09', 30);
+daysInMonthMap.set('10', 31);
+daysInMonthMap.set('11', 30);
+daysInMonthMap.set('12', 31);
 
 function yearToPaddedString(year: number): string {
-  return year % 100 < 10 ? `0${year}` : year.toString()
+  return year % 100 < 10 ? `0${year}` : year.toString();
 }
-const checksumTable: string[] = '0123456789ABCDEFHJKLMNPRSTUVWXY'.split('')
+const checksumTable: string[] = '0123456789ABCDEFHJKLMNPRSTUVWXY'.split('');
 
 const generateFinnishHETU = (dob: string, genderDigit: number): string => {
-  const [yyyy, mm, dd] = dob.split('-') as string[]
-  let year = parseInt(yyyy!)
-  const rollingId = +`${randomDigit(2)}${genderDigit}`
+  const [yyyy, mm, dd] = dob.split('-') as string[];
+  let year = parseInt(yyyy!);
+  const rollingId = +`${randomDigit(2)}${genderDigit}`;
 
-  const possibleCenturySigns: string[] = []
+  const possibleCenturySigns: string[] = [];
   centuryMap.forEach((value: number, key: string) => {
     if (value === Math.floor(year / 100) * 100) {
-      possibleCenturySigns.push(key)
+      possibleCenturySigns.push(key);
     }
-  })
-  const centurySign = possibleCenturySigns[Math.floor(Math.random() * possibleCenturySigns.length)]
+  });
+  const centurySign = possibleCenturySigns[Math.floor(Math.random() * possibleCenturySigns.length)];
 
-  year = year % 100
-  const yearString = yearToPaddedString(year)
-  const checksumBase = parseInt(dd! + mm! + yearString + rollingId, 10)
-  const checksum = checksumTable[checksumBase % 31]
+  year = year % 100;
+  const yearString = yearToPaddedString(year);
+  const checksumBase = parseInt(dd! + mm! + yearString + rollingId, 10);
+  const checksum = checksumTable[checksumBase % 31];
 
-  return `${dd}${mm}${yearString}${centurySign}${rollingId}${checksum}`
-}
+  return `${dd}${mm}${yearString}${centurySign}${rollingId}${checksum}`;
+};
 
-const validator = new Validator()
-const maxAttempts = 10
-let attempts = 0
+const validator = new Validator();
+const maxAttempts = 10;
+let attempts = 0;
 const handleChange = (data: formData) => {
-  const ssn = generateFinnishHETU(data.dateOfBirth, data.genderDigit)
+  const ssn = generateFinnishHETU(data.dateOfBirth, data.genderDigit);
 
   if (!validator.isValid(ssn.replace(/[-A]/g, ''), 'FI') && attempts < maxAttempts) {
-    console.error('Generated invalid HETU, retrying... ' + attempts)
-    attempts++
-    handleChange(data)
-    return
+    console.error('Generated invalid HETU, retrying... ' + attempts);
+    attempts++;
+    handleChange(data);
+    return;
   }
 
   switch (format.value) {
     case 'DDMMYY-NNNNN':
-      output.value = `${ssn.slice(0, 6)}-${ssn.slice(6)}`
-      break
+      output.value = `${ssn.slice(0, 6)}-${ssn.slice(6)}`;
+      break;
     case 'DDMMYYNNNNN':
-      output.value = ssn
-      break
+      output.value = ssn;
+      break;
   }
 
-  attempts = 0
-}
+  attempts = 0;
+};
 
 watch(output, (newVal) => {
-  isValid.value = validator.isValid(newVal.replace(/[-A]/g, ''), 'FI')
-})
+  isValid.value = validator.isValid(newVal.replace(/[-A]/g, ''), 'FI');
+});
 
 useSeoMeta({
   title: 'Finland personal identity code (Henkilötunnus) Generator and Validator',
   description: 'Generate and validate Finnish personal identity code (Henkilötunnus) with ease using this online tool. Generate fake HETU for testing purposes.',
   ogTitle: 'Finland personal identity code (Henkilötunnus) Generator and Validator',
   ogDescription: 'Generate and validate Finnish personal identity code (Henkilötunnus) with ease using this online tool. Generate fake HETU for testing purposes.'
-})
+});
 </script>

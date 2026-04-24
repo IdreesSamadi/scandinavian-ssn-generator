@@ -130,79 +130,79 @@
 </template>
 
 <script setup lang="ts">
-import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date'
-import { useClipboard } from '@vueuse/core'
+import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
+import { useClipboard } from '@vueuse/core';
 
 export interface formData {
   /**
    * Date of birth in the format YYYY-MM-DD
    */
-  dateOfBirth: string
+  dateOfBirth: string;
 
   /**
    * The digit representing gender (odd for male, even for female)
    */
-  genderDigit: number
+  genderDigit: number;
 }
 
-const { copy, copied } = useClipboard()
+const { copy, copied } = useClipboard();
 
 const output = defineModel('output', {
   type: String,
   required: true
-})
+});
 
 const format = defineModel('format', {
   type: String,
   required: true
-})
+});
 
 const emit = defineEmits<{
-  (e: 'change', data: formData): void
-}>()
+  (e: 'change', data: formData): void;
+}>();
 
 const { formats, isValid = true } = defineProps<{
-  formats: string[]
-  isValid?: boolean
-}>()
+  formats: string[];
+  isValid?: boolean;
+}>();
 
-const age = ref(1)
-const gender = ref<'Male' | 'Female'>('Male')
+const age = ref(1);
+const gender = ref<'Male' | 'Female'>('Male');
 
-const minAge = 1
-const maxAge = 150
-const todayDate = today(getLocalTimeZone())
-const maxDate = new CalendarDate(todayDate.year, todayDate.month, todayDate.day)
-const minDate = new CalendarDate(todayDate.year - maxAge, todayDate.month, todayDate.day)
-const dateOfBirth = shallowRef(new CalendarDate(2022, 2, 3))
-const inputDate = useTemplateRef('inputDate')
+const minAge = 1;
+const maxAge = 150;
+const todayDate = today(getLocalTimeZone());
+const maxDate = new CalendarDate(todayDate.year, todayDate.month, todayDate.day);
+const minDate = new CalendarDate(todayDate.year - maxAge, todayDate.month, todayDate.day);
+const dateOfBirth = shallowRef(new CalendarDate(2022, 2, 3));
+const inputDate = useTemplateRef('inputDate');
 
 watch(age, (newAge) => {
-  const td = today('Europe/Stockholm')
-  dateOfBirth.value = new CalendarDate(td.year - newAge, td.month, td.day)
-})
+  const td = today('Europe/Stockholm');
+  dateOfBirth.value = new CalendarDate(td.year - newAge, td.month, td.day);
+});
 
 watch(dateOfBirth, (newDate) => {
-  const td = today('Europe/Stockholm')
-  age.value = td.year - newDate.year
-}, { immediate: true })
+  const td = today('Europe/Stockholm');
+  age.value = td.year - newDate.year;
+}, { immediate: true });
 
 watch([format, gender, age, dateOfBirth], () => {
   emit('change', {
     dateOfBirth: dateOfBirth.value.toString(),
     genderDigit: gender.value === 'Male' ? randomOddDigit() : randomEvenDigit()
-  })
-})
+  });
+});
 
 const randomizeInputs = () => {
-  const td = today('Europe/Stockholm')
-  const randomYear = Math.floor(Math.random() * 100) + (td.year - 100)
-  const randomMonth = Math.floor(Math.random() * 12) + 1
-  const randomDay = Math.floor(Math.random() * 28) + 1
+  const td = today('Europe/Stockholm');
+  const randomYear = Math.floor(Math.random() * 100) + (td.year - 100);
+  const randomMonth = Math.floor(Math.random() * 12) + 1;
+  const randomDay = Math.floor(Math.random() * 28) + 1;
 
-  dateOfBirth.value = new CalendarDate(randomYear, randomMonth, randomDay)
-  gender.value = Math.random() < 0.5 ? 'Male' : 'Female'
-}
+  dateOfBirth.value = new CalendarDate(randomYear, randomMonth, randomDay);
+  gender.value = Math.random() < 0.5 ? 'Male' : 'Female';
+};
 </script>
 
 <style>
