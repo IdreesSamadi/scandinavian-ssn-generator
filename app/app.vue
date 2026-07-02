@@ -5,22 +5,23 @@
       <nuxt-page />
     </u-main>
 
-    <u-separator
-      type="dashed"
-      class="h-px"
-    />
+    <u-separator class="h-px" />
     <app-footer />
   </u-app>
 </template>
 
 <script setup lang="ts">
-const title = 'Scandinavian Social Security Number Generator and Validator';
-const description = 'Generate and validate Swedish Personnummer, Norwegian Fødselsnummer, Danish CPR Number, Finnish HETU, and Icelandic Kennitala with our easy-to-use online tool. All processing is done in the browser for maximum privacy and security.';
+import { joinURL } from 'ufo';
+
+const site = useSiteConfig();
+const { app } = useRuntimeConfig();
 
 useSeoMeta({
-  title,
-  description,
-  ogTitle: title,
-  ogDescription: description
+  ogType: 'website',
+  ogSiteName: 'Scandinavian SSN Generator and Validator',
+  ogImage: joinURL(site.url.replace(/\/$/, ''), app.baseURL, 'og-image.png'),
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
+  twitterCard: 'summary_large_image'
 });
 </script>

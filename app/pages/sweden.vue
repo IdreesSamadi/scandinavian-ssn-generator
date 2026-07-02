@@ -1,42 +1,97 @@
 <template>
-  <u-container class="text-center py-8">
-    <u-container>
-      <h1 class="text-3xl font-bold mb-8 flex items-center justify-center flex-col">
-        <p class="text-4xl">
-          sweden
-        </p>
-        <p class="text-primary">
-          PERSONNUMMER
-        </p>
-      </h1>
-      <p class="text-lg mb-4">
-        The personal identity number consists of <strong>12 digits</strong> and is based on the <strong>date of birth</strong> and a <strong>four-digit individual number</strong>.
-        The format of the personal identity number is <strong>YYYYMMDD-NNNN</strong>, where <strong>YYYYMMDD</strong> represents the date of birth and <strong>NNNN</strong> is the individual that uses <strong>Luhn algorithm</strong>.
-      </p>
+  <u-container class="max-w-3xl py-10 sm:py-14">
+    <country-hero
+      country="sweden"
+      country-name="Sweden"
+      title="Personnummer"
+      :chips="['12 digits', 'YYYYMMDD-NNNN', 'Luhn checksum']"
+    >
+      Twelve digits: the date of birth followed by a three-digit individual number and a check digit computed with the Luhn algorithm. The second-to-last digit is odd for men and even for women.
+    </country-hero>
 
-      <u-separator
-        size="xl"
-        class="py-8 mb-4"
-      />
-    </u-container>
-    <u-container>
+    <div class="mt-10">
       <generator-form
         v-model:output="output"
         v-model:format="format"
         :is-valid="isValid"
         :formats="formats"
+        :segments="segmentMap[format] ?? []"
         @change="handleChange"
       />
-    </u-container>
+    </div>
+
+    <section class="mt-16">
+      <h2 class="text-2xl font-bold tracking-tight text-highlighted">
+        About the Swedish personnummer
+      </h2>
+      <div class="mt-4 space-y-4 text-muted">
+        <p>
+          The personnummer is Sweden's national identity number, issued by the Swedish Tax Agency (Skatteverket) to everyone registered in the country. In its full form it has twelve digits: an eight-digit date of birth, a three-digit birth number, and a check digit. The second-to-last digit encodes gender — odd for men, even for women — and the check digit is a Luhn checksum computed over the ten-digit short form.
+        </p>
+        <p>
+          Real systems accept several spellings of the same number: the ten-digit form with a hyphen (YYMMDD-NNNN), which switches to a plus sign the year a person turns 100, and the twelve-digit machine form used by most modern APIs. The generator above produces these formats with a correct checksum, so you can exercise parsing, storage and validation logic with data that behaves exactly like the real thing.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold tracking-tight text-highlighted">
+        Frequently asked questions
+      </h2>
+      <div class="mt-6 space-y-6">
+        <div
+          v-for="item in faq"
+          :key="item.question"
+        >
+          <h3 class="font-semibold text-highlighted">
+            {{ item.question }}
+          </h3>
+          <p class="mt-1.5 text-muted">
+            {{ item.answer }}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <related-countries
+      current="sweden"
+      class="mt-16"
+    />
   </u-container>
 </template>
 
 <script setup lang="ts">
 import Validator from 'nordic-id-validator';
 import type { formData } from '~/components/generator-form.vue';
+import type { SsnSegment } from '~/components/ssn-display.vue';
 
 const formats = ['YYMMDD-NNNN', 'YYYYMMDD-NNNN', 'YYMMDDNNNN', 'YYYYMMDDNNNN'];
 const format = ref('YYYYMMDD-NNNN');
+
+const segmentMap: Record<string, SsnSegment[]> = {
+  'YYMMDD-NNNN': [
+    { len: 6, kind: 'date', label: 'birth date' },
+    { len: 1, kind: 'sep' },
+    { len: 3, kind: 'serial', label: 'individual' },
+    { len: 1, kind: 'check', label: 'checksum' }
+  ],
+  'YYYYMMDD-NNNN': [
+    { len: 8, kind: 'date', label: 'birth date' },
+    { len: 1, kind: 'sep' },
+    { len: 3, kind: 'serial', label: 'individual' },
+    { len: 1, kind: 'check', label: 'checksum' }
+  ],
+  'YYMMDDNNNN': [
+    { len: 6, kind: 'date', label: 'birth date' },
+    { len: 3, kind: 'serial', label: 'individual' },
+    { len: 1, kind: 'check', label: 'checksum' }
+  ],
+  'YYYYMMDDNNNN': [
+    { len: 8, kind: 'date', label: 'birth date' },
+    { len: 3, kind: 'serial', label: 'individual' },
+    { len: 1, kind: 'check', label: 'checksum' }
+  ]
+};
 
 const output = ref('');
 const isValid = ref(true);
@@ -93,10 +148,25 @@ watch(output, (newValue) => {
   isValid.value = validator.isValid(newValue.replace(/[-+A]/g, ''), 'SE');
 });
 
-useSeoMeta({
-  title: 'Sweden social security number (Personnummer) Generator and Validator',
-  description: 'Generate and validate Swedish identity number (Personnummer) with ease using this online tool. Fake Personnummer generator and validator for testing purposes.',
-  ogTitle: 'Sweden social security number (Personnummer) Generator and Validator',
-  ogDescription: 'Generate and validate Swedish identity number (Personnummer) with ease using this online tool. Fake Personnummer generator and validator for testing purposes.'
+const faq = [
+  {
+    question: 'Are the generated personnummer real?',
+    answer: 'No. Each number is assembled from the date of birth you choose and random digits, then given a valid Luhn check digit. It is not looked up against any register, and any match with a living person’s number is pure coincidence.'
+  },
+  {
+    question: 'What do the digits in a Swedish personnummer mean?',
+    answer: 'The first eight digits (YYYYMMDD) are the date of birth. The next three are the birth number, whose last digit is odd for men and even for women. The final digit is a checksum calculated with the Luhn algorithm over the ten-digit short form.'
+  },
+  {
+    question: 'Can I use these numbers outside of testing?',
+    answer: 'They are meant for test and development environments. Using a fabricated identity number to impersonate someone or sign up for real services may be illegal. Skatteverket also publishes official test personnummer for public test data.'
+  }
+];
+
+usePageSeo({
+  title: 'Swedish Personnummer Generator & Validator — Fake Test SSN',
+  description: 'Generate fake Swedish personnummer with a valid Luhn checksum, or validate an existing personal identity number. Choose age, gender, date of birth and format. Free and browser-based, for software testing.',
+  breadcrumb: 'Sweden',
+  faq
 });
 </script>

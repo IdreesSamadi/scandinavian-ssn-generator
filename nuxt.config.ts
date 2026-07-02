@@ -9,8 +9,6 @@ export default defineNuxtConfig({
     '@nuxtjs/robots'
   ],
 
-  ssr: false,
-
   devtools: {
     enabled: true
   },
@@ -36,15 +34,19 @@ export default defineNuxtConfig({
 
   site: {
     url: 'https://idreessamadi.github.io/',
-    name: 'Scandinavian Countries SSN Generator and Validator',
-    indexable: true
-  },
-
-  routeRules: {
-    '/': { prerender: true }
+    name: 'Scandinavian SSN Generator and Validator',
+    indexable: true,
+    trailingSlash: true
   },
 
   compatibilityDate: '2025-01-15',
+
+  nitro: {
+    prerender: {
+      crawlLinks: true,
+      routes: ['/', '/sweden', '/denmark', '/norway', '/finland', '/iceland']
+    }
+  },
 
   eslint: {
     config: {
@@ -55,11 +57,34 @@ export default defineNuxtConfig({
     }
   },
 
+  fonts: {
+    families: [
+      { name: 'Familjen Grotesk', provider: 'google', weights: [400, 500, 600, 700] },
+      { name: 'Spline Sans Mono', provider: 'google', weights: [400, 500, 600] }
+    ]
+  },
+
+  icon: {
+    mode: 'svg'
+  },
+
+  robots: {
+    // robots.txt must live at the domain root, which a GitHub Pages
+    // project site cannot control — keep the meta tag, skip the file
+    robotsTxt: false
+  },
+
   scripts: {
     registry: {
       googleAnalytics: {
         id: 'G-F7BQ4W3Y0P'
       }
     }
+  },
+
+  sitemap: {
+    // Auto-collected sources double the GitHub Pages base path; list routes explicitly
+    excludeAppSources: true,
+    urls: ['/', '/sweden', '/denmark', '/norway', '/finland', '/iceland']
   }
 });

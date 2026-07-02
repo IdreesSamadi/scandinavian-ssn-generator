@@ -1,40 +1,87 @@
 <template>
-  <u-container class="text-center py-8">
-    <u-container>
-      <h1 class="text-3xl font-bold mb-8 flex items-center justify-center flex-col">
-        <p class="text-4xl">
-          iceland
-        </p>
-        <p class="text-primary">
-          KENNITALA
-        </p>
-      </h1>
-      <p class="text-lg mb-4">
-        The Icelandic national identification number, known as Kennitala, consists of <strong>10 digits</strong> and is based on the <strong>date of birth</strong> and a <strong>four-digit individual number</strong>. The format of the Kennitala is <strong>DDMMYY-XXXX</strong>, where <strong>DDMMYY</strong> represents the date of birth and <strong>XXXX</strong> is the individual number. The last digit of the individual number is a control digit that uses the modulus 11 algorithm.
-      </p>
+  <u-container class="max-w-3xl py-10 sm:py-14">
+    <country-hero
+      country="iceland"
+      country-name="Iceland"
+      title="Kennitala"
+      :chips="['10 digits', 'DDMMYY-NNNN', 'Mod 11 checksum']"
+    >
+      Ten digits: the date of birth, a two-digit sequence number, a modulus 11 check digit, and a final digit marking the century of birth (9 for the 1900s, 0 for the 2000s).
+    </country-hero>
 
-      <u-separator
-        size="xl"
-        class="py-8 mb-4"
-      />
-    </u-container>
-    <u-container>
+    <div class="mt-10">
       <generator-form
         v-model:output="output"
         v-model:format="format"
         :is-valid="isValid"
         :formats="formats"
+        :segments="segmentMap[format] ?? []"
         @change="handleChange"
       />
-    </u-container>
+    </div>
+
+    <section class="mt-16">
+      <h2 class="text-2xl font-bold tracking-tight text-highlighted">
+        About the Icelandic kennitala
+      </h2>
+      <div class="mt-4 space-y-4 text-muted">
+        <p>
+          The kennitala is Iceland's national identification number, maintained by Registers Iceland (Þjóðskrá Íslands). Its ten digits are the date of birth in DDMMYY order, a two-digit sequence number that starts at 20, a modulus 11 check digit, and a final century digit — 8 for the 1800s, 9 for the 1900s and 0 for the 2000s.
+        </p>
+        <p>
+          Unlike most national ID numbers, the kennitala is not treated as a secret in Iceland: it is used openly for everything from banking to gym memberships. Companies and institutions receive kennitölur too, distinguished by adding 40 to the day of the month. The generator above produces personal kennitölur with a valid check digit for any date you pick.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold tracking-tight text-highlighted">
+        Frequently asked questions
+      </h2>
+      <div class="mt-6 space-y-6">
+        <div
+          v-for="item in faq"
+          :key="item.question"
+        >
+          <h3 class="font-semibold text-highlighted">
+            {{ item.question }}
+          </h3>
+          <p class="mt-1.5 text-muted">
+            {{ item.answer }}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <related-countries
+      current="iceland"
+      class="mt-16"
+    />
   </u-container>
 </template>
 
 <script setup lang="ts">
 import type { formData } from '~/components/generator-form.vue';
+import type { SsnSegment } from '~/components/ssn-display.vue';
 
 const formats = ['DDMMYY-NNNN', 'DDMMYYNNNN'];
 const format = ref('DDMMYY-NNNN');
+
+const segmentMap: Record<string, SsnSegment[]> = {
+  'DDMMYY-NNNN': [
+    { len: 6, kind: 'date', label: 'birth date' },
+    { len: 1, kind: 'sep' },
+    { len: 2, kind: 'serial', label: 'sequence' },
+    { len: 1, kind: 'check', label: 'checksum' },
+    { len: 1, kind: 'century', label: 'century' }
+  ],
+  'DDMMYYNNNN': [
+    { len: 6, kind: 'date', label: 'birth date' },
+    { len: 2, kind: 'serial', label: 'sequence' },
+    { len: 1, kind: 'check', label: 'checksum' },
+    { len: 1, kind: 'century', label: 'century' }
+  ]
+};
 
 const output = ref('');
 const isValid = ref(true);
@@ -144,10 +191,25 @@ watch(output, (newValue) => {
   isValid.value = validateIcelandicKt(newValue);
 }, { immediate: true });
 
-useSeoMeta({
-  title: 'Icelandic national identification number (Kennitala) Generator and Validator',
-  description: 'Generate and validate Icelandic national identification number (Kennitala) with ease using this online tool. Generate fake Icelandic social security numbers (Kennitala) for testing purposes and validate real ones to ensure they are correctly formatted. ',
-  ogTitle: 'Icelandic national identification number (Kennitala) Generator and Validator',
-  ogDescription: 'Generate and validate Icelandic national identification number (Kennitala) with ease using this online tool. Generate fake Icelandic social security numbers (Kennitala) for testing purposes and validate real ones to ensure they are correctly formatted.'
+const faq = [
+  {
+    question: 'Are the generated kennitölur real?',
+    answer: 'No. Each number combines the date of birth you choose with a sequence number and a computed modulus 11 check digit. It is not checked against Registers Iceland, and any match with a real person’s kennitala is coincidental.'
+  },
+  {
+    question: 'Why is the check digit not the last digit?',
+    answer: 'The ninth digit is the modulus 11 checksum, computed over the first eight digits. The tenth and final digit marks the century of birth instead: 8 for the 1800s, 9 for the 1900s and 0 for the 2000s.'
+  },
+  {
+    question: 'How do company kennitölur differ from personal ones?',
+    answer: 'Organisations registered in Iceland get a kennitala where 40 is added to the day of the month, so a company registered on the 5th starts with 45. This tool generates personal kennitölur only.'
+  }
+];
+
+usePageSeo({
+  title: 'Icelandic Kennitala Generator & Validator — Fake Test Numbers',
+  description: 'Generate fake Icelandic kennitala with a valid modulus 11 check digit, or validate an existing national ID number. Choose date of birth, age and format. Free, browser-based test data for developers.',
+  breadcrumb: 'Iceland',
+  faq
 });
 </script>

@@ -1,137 +1,109 @@
 <template>
-  <div>
-    <u-form class="flex gap-8 justify-between flex-col">
-      <u-form-field
-        size="xl"
-        :error="isValid ? undefined : 'Invalid Social Security Number'"
-      >
-        <u-input
-          v-model="output"
-          highlight
-          :color="isValid ? 'success' : 'error'"
-          size="xl"
-          class="w-full md:w-xl"
+  <u-form class="flex flex-col gap-8">
+    <ssn-display
+      v-model:output="output"
+      :segments="segments"
+      :is-valid="isValid"
+    />
+
+    <div class="rounded-(--ui-radius) border border-(--ui-border) p-5 sm:p-6">
+      <p class="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted mb-5">
+        Parameters
+      </p>
+      <div class="grid sm:grid-cols-2 gap-x-6 gap-y-5">
+        <u-form-field
+          size="lg"
+          label="Date of birth"
         >
-          <template
-            v-if="output?.length"
-            #trailing
-          >
-            <UTooltip
-              text="Copy to clipboard"
-              :content="{ side: 'right' }"
-            >
-              <UButton
-                :color="copied ? 'success' : 'neutral'"
-                variant="link"
-                size="sm"
-                :icon="copied ? 'i-lucide-copy-check' : 'i-lucide-copy'"
-                aria-label="Copy to clipboard"
-                @click="copy(output)"
-              />
-            </UTooltip>
-          </template>
-        </u-input>
-      </u-form-field>
-      <u-separator
-        type="dashed"
-        size="md"
-        class="mt-4 mb-1"
-      />
-      <div class="flex gap-8 justify-between md:flex-row flex-col">
-        <div class="flex flex-col gap-4 grow justify-between">
-          <!-- <div class="flex flex-col gap-4"> -->
-          <u-form-field
-            size="xl"
-            label="Output format"
-          >
-            <u-select
-              v-model="format"
-              class="w-full"
-              size="xl"
-              :items="formats"
-            />
-          </u-form-field>
-          <u-form-field
-            label="Gender"
-          >
-            <u-radio-group
-              v-model="gender"
-              orientation="horizontal"
-              size="sm"
-              variant="card"
-              :items="['Male', 'Female']"
-              class="gender-radio-group"
-            />
-          </u-form-field>
-        </div>
-        <div class="flex flex-col gap-4 grow">
-          <u-form-field
-            size="xl"
-            label="Age"
-          >
-            <u-input-number
-              v-model="age"
-              class="w-full"
-              size="xl"
-              orientation="vertical"
-              :min="minAge"
-              :max="maxAge"
-            />
-          </u-form-field>
-
-          <u-form-field
-            size="xl"
-            label="Date of Birth"
+          <u-input-date
+            ref="inputDate"
+            v-model="dateOfBirth"
+            :max-value="maxDate"
+            :min-value="minDate"
             class="w-full"
-            hint="mm/dd/yyyy"
+            size="lg"
           >
-            <u-input-date
-              ref="inputDate"
-              v-model="dateOfBirth"
-              :max-value="maxDate"
-              :min-value="minDate"
-              class="w-full"
-              size="xl"
-            >
-              <template #trailing>
-                <u-popover :reference="inputDate?.inputsRef[3]?.$el">
-                  <u-button
-                    color="neutral"
-                    variant="link"
-                    size="sm"
-                    icon="i-lucide-calendar"
-                    aria-label="Select a date"
-                    class="px-0"
-                  />
+            <template #trailing>
+              <u-popover :reference="inputDate?.inputsRef[3]?.$el">
+                <u-button
+                  color="neutral"
+                  variant="link"
+                  size="sm"
+                  icon="i-lucide-calendar"
+                  aria-label="Select a date"
+                  class="px-0"
+                />
 
-                  <template #content>
-                    <u-calendar
-                      v-model="dateOfBirth"
-                      :max-value="todayDate"
-                      :min-value="minDate"
-                      class="p-2"
-                    />
-                  </template>
-                </u-popover>
-              </template>
-            </u-input-date>
-          </u-form-field>
-        </div>
+                <template #content>
+                  <u-calendar
+                    v-model="dateOfBirth"
+                    :max-value="todayDate"
+                    :min-value="minDate"
+                    class="p-2"
+                  />
+                </template>
+              </u-popover>
+            </template>
+          </u-input-date>
+        </u-form-field>
+
+        <u-form-field
+          size="lg"
+          label="Age"
+        >
+          <u-input-number
+            v-model="age"
+            class="w-full"
+            size="lg"
+            :min="minAge"
+            :max="maxAge"
+          />
+        </u-form-field>
+
+        <u-form-field
+          size="lg"
+          label="Gender"
+        >
+          <u-radio-group
+            v-model="gender"
+            orientation="horizontal"
+            size="sm"
+            variant="card"
+            :items="['Male', 'Female']"
+            class="gender-radio-group"
+          />
+        </u-form-field>
+
+        <u-form-field
+          size="lg"
+          label="Output format"
+        >
+          <u-select
+            v-model="format"
+            class="w-full font-mono"
+            size="lg"
+            :items="formats"
+            :ui="{ item: 'font-mono' }"
+          />
+        </u-form-field>
       </div>
+
       <u-button
         block
-        size="xl"
+        size="lg"
+        icon="i-lucide-dices"
+        class="mt-6"
         @click="randomizeInputs"
       >
         Randomize
       </u-button>
-    </u-form>
-  </div>
+    </div>
+  </u-form>
 </template>
 
 <script setup lang="ts">
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
-import { useClipboard } from '@vueuse/core';
+import type { SsnSegment } from '~/components/ssn-display.vue';
 
 export interface formData {
   /**
@@ -144,8 +116,6 @@ export interface formData {
    */
   genderDigit: number;
 }
-
-const { copy, copied } = useClipboard();
 
 const output = defineModel('output', {
   type: String,
@@ -161,8 +131,9 @@ const emit = defineEmits<{
   (e: 'change', data: formData): void;
 }>();
 
-const { formats, isValid = true } = defineProps<{
+const { formats, segments, isValid = true } = defineProps<{
   formats: string[];
+  segments: SsnSegment[];
   isValid?: boolean;
 }>();
 
@@ -206,6 +177,11 @@ const randomizeInputs = () => {
 </script>
 
 <style>
+.gender-radio-group,
+.gender-radio-group > div {
+  width: 100%;
+}
+
 .gender-radio-group label {
   width: 100%;
 }

@@ -2,17 +2,52 @@
 @import "@nuxt/ui";
 
 @theme static {
-  --font-sans: 'Public Sans', sans-serif;
+  --font-sans: 'Familjen Grotesk', sans-serif;
+  --font-mono: 'Spline Sans Mono', monospace;
 
-  --color-green-50: #EFFDF5;
-  --color-green-100: #D9FBE8;
-  --color-green-200: #B3F5D1;
-  --color-green-300: #75EDAE;
-  --color-green-400: #00DC82;
-  --color-green-500: #00C16A;
-  --color-green-600: #00A155;
-  --color-green-700: #007F45;
-  --color-green-800: #016538;
-  --color-green-900: #0A5331;
-  --color-green-950: #052E16;
+  /* Fjord blue — cold, civic, Nordic */
+  --color-blue-50: #F2F7FB;
+  --color-blue-100: #E1EDF6;
+  --color-blue-200: #C5DCEC;
+  --color-blue-300: #9AC2DD;
+  --color-blue-400: #67A1C9;
+  --color-blue-500: #4483B4;
+  --color-blue-600: #2F6897;
+  --color-blue-700: #2A547B;
+  --color-blue-800: #274867;
+  --color-blue-900: #253D57;
+  --color-blue-950: #18283A;
+}
+
+/* Segment colors for the ID specimen: the date reads as plain ink,
+   color marks the parts that carry hidden meaning. */
+:root {
+  --seg-serial: var(--color-blue-600);
+  --seg-century: #B45309;
+  --seg-check: #047857;
+}
+.dark {
+  --seg-serial: var(--color-blue-400);
+  --seg-century: #FBBF24;
+  --seg-check: #34D399;
+}
+
+.seg-date {
+  color: var(--ui-text-highlighted);
+}
+
+.seg-sep {
+  color: var(--ui-text-dimmed);
+}
+
+.seg-serial {
+  color: var(--seg-serial);
+}
+
+.seg-century {
+  color: var(--seg-century);
+}
+
+.seg-check {
+  color: var(--seg-check);
 }

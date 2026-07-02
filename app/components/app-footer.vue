@@ -1,17 +1,20 @@
 <template>
-  <u-footer class="text-center py-4">
-    <div class="text-sm text-neutral-500">
-      <p class="mb-2">
-        If you have any suggestions, or would like to contribute to the project, please feel free to reach out or submit a <a
-          href="https://github.com/IdreesSamadi/scandinavian-ssn-generator/pulls"
-          target="_blank"
-          class="text-primary hover:underline"
-        >pull request</a>. Your feedback and contributions are greatly appreciated!
-      </p>
-      <p>
-        &copy; {{ new Date().getFullYear() }} Scandinavian Social Security Number Generator and Validator.
-      </p>
-    </div>
+  <u-footer class="py-6">
+    <template #left>
+      <div class="text-sm text-muted">
+        <p>
+          Numbers are generated in your browser and never leave it. For testing and development only.
+        </p>
+        <p class="mt-1 text-dimmed">
+          &copy; {{ new Date().getFullYear() }} Scandinavian SSN Generator &middot;
+          <a
+            href="https://github.com/IdreesSamadi/scandinavian-ssn-generator/pulls"
+            target="_blank"
+            class="hover:text-highlighted transition-colors"
+          >Contributions welcome</a>
+        </p>
+      </div>
+    </template>
     <template #right>
       <u-tooltip
         text="Open on GitHub"
