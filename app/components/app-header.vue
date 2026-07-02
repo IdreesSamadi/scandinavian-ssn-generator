@@ -1,7 +1,9 @@
 <template>
   <u-header>
     <template #title>
-      YYYYMMDD-SSN
+      <span class="font-mono text-sm font-medium tracking-wide text-highlighted">
+        YYYYMMDD<span class="text-primary">-NNNN</span>
+      </span>
     </template>
 
     <u-navigation-menu :items="items" />
@@ -41,7 +43,7 @@ const route = useRoute();
 
 const items = computed<NavigationMenuItem[]>(() => [
   {
-    label: 'Sweden ',
+    label: 'Sweden',
     to: '/sweden',
     active: route.path.startsWith('/sweden')
   },

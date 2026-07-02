@@ -1,48 +1,93 @@
 <template>
-  <u-container class="text-center py-8">
-    <u-container>
-      <h1 class="text-3xl font-bold mb-8 flex items-center justify-center flex-col">
-        <p class="text-4xl">
-          denmark
-        </p>
-        <p class="text-primary">
-          PERSONNUMMER
-        </p>
-      </h1>
-      <p class="text-lg mb-4">
-        The Danish personal identification number (personnummer), known as the CPR number, consists of <strong>10 digits</strong> and is based on the <strong>date of birth</strong> and a <strong>four-digit individual number</strong>.
-        The format of the personnummer is <strong>DDMMYY-NNNN</strong>, where <strong>DDMMYY</strong> represents the date of birth and <strong>NNNN</strong> is the individual number that uses the <strong>Luhn algorithm</strong>.
-      </p>
-      <p>
-        The CPR algorithm is based on the <a
-          class="text-primary hover:underline"
-          href="https://cdn9.cpr.dk/cpr/media/17534/personnummeret-i-cpr.pdf"
-        >Personnummeret i CPR-systemet document</a>.
-      </p>
+  <u-container class="max-w-3xl py-10 sm:py-14">
+    <country-hero
+      country="denmark"
+      country-name="Denmark"
+      title="CPR-nummer"
+      :chips="['10 digits', 'DDMMYY-NNNN', 'Mod 11 checksum']"
+    >
+      Ten digits: the date of birth followed by a four-digit sequence number whose first digit encodes the century and whose last digit doubles as a modulus 11 check digit — odd for men, even for women. Based on the
+      <a
+        class="text-primary hover:underline"
+        href="https://cdn9.cpr.dk/cpr/media/17534/personnummeret-i-cpr.pdf"
+        target="_blank"
+      >Personnummeret i CPR-systemet</a> document.
+    </country-hero>
 
-      <u-separator
-        size="xl"
-        class="py-8 mb-4"
-      />
-    </u-container>
-    <u-container>
+    <div class="mt-10">
       <generator-form
         v-model:output="output"
         v-model:format="format"
         :is-valid="isValid"
         :formats="formats"
+        :segments="segmentMap[format] ?? []"
         @change="handleChange"
       />
-    </u-container>
+    </div>
+
+    <section class="mt-16">
+      <h2 class="text-2xl font-bold tracking-tight text-highlighted">
+        About the Danish CPR number
+      </h2>
+      <div class="mt-4 space-y-4 text-muted">
+        <p>
+          The CPR number (CPR-nummer, or personnummer) has identified every resident of Denmark since the Central Person Register was introduced in 1968. It has ten digits: a six-digit date of birth in DDMMYY order followed by a four-digit sequence number. The seventh digit encodes the century of birth according to an official table, and the last digit is odd for men and even for women.
+        </p>
+        <p>
+          Originally every CPR number also satisfied a modulus 11 checksum. Denmark began issuing numbers without a valid check digit in 2007, when the supply for some birth dates ran out — but a large share of real-world systems still enforce the old rule. The generator above always produces numbers that pass modulus 11, so they are accepted by strict and modern validators alike.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="text-2xl font-bold tracking-tight text-highlighted">
+        Frequently asked questions
+      </h2>
+      <div class="mt-6 space-y-6">
+        <div
+          v-for="item in faq"
+          :key="item.question"
+        >
+          <h3 class="font-semibold text-highlighted">
+            {{ item.question }}
+          </h3>
+          <p class="mt-1.5 text-muted">
+            {{ item.answer }}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <related-countries
+      current="denmark"
+      class="mt-16"
+    />
   </u-container>
 </template>
 
 <script setup lang="ts">
 import type { formData } from '~/components/generator-form.vue';
+import type { SsnSegment } from '~/components/ssn-display.vue';
 import Validator from 'nordic-id-validator';
 
 const formats = ['DDMMYY-NNNN', 'DDMMYYNNNN'];
 const format = ref('DDMMYY-NNNN');
+
+const segmentMap: Record<string, SsnSegment[]> = {
+  'DDMMYY-NNNN': [
+    { len: 6, kind: 'date', label: 'birth date' },
+    { len: 1, kind: 'sep' },
+    { len: 1, kind: 'century', label: 'century' },
+    { len: 2, kind: 'serial', label: 'sequence' },
+    { len: 1, kind: 'check', label: 'checksum' }
+  ],
+  'DDMMYYNNNN': [
+    { len: 6, kind: 'date', label: 'birth date' },
+    { len: 1, kind: 'century', label: 'century' },
+    { len: 2, kind: 'serial', label: 'sequence' },
+    { len: 1, kind: 'check', label: 'checksum' }
+  ]
+};
 
 const output = ref('');
 const isValid = ref(true);
@@ -144,10 +189,25 @@ watch(output, (newValue) => {
   isValid.value = validator.isValid(newValue, 'DK');
 });
 
-useSeoMeta({
-  title: 'Denmark personal identification number (Personnummer) Generator and Validator',
-  description: 'Generate and validate Danish personal identification number (Personnummer) with ease using this online tool. Generate fake CPR numbers for testing purposes and validate real ones to ensure they are correctly formatted.',
-  ogTitle: 'Denmark personal identification number (Personnummer) Generator and Validator',
-  ogDescription: 'Generate and validate Danish personal identification number (Personnummer) with ease using this online tool. Generate fake CPR numbers for testing purposes and validate real ones to ensure they are correctly formatted.'
+const faq = [
+  {
+    question: 'Are the generated CPR numbers real?',
+    answer: 'No. Each number is built from the date of birth you choose plus a sequence number that satisfies the modulus 11 checksum. It is not checked against the Central Person Register, and any match with a real person’s CPR number is coincidental.'
+  },
+  {
+    question: 'Do all real CPR numbers pass the modulus 11 check?',
+    answer: 'No. Since 2007 Denmark has issued CPR numbers without a valid check digit for birth dates where the numbering pool ran out, so validators should not require it. Numbers from this tool always pass modulus 11, which means both strict and lenient systems accept them.'
+  },
+  {
+    question: 'What does the seventh digit of a CPR number mean?',
+    answer: 'Together with the two-digit year, the seventh digit determines the century of birth: 0–3 always means the 1900s, while 4, 9 and 5–8 map to the 1800s, 1900s or 2000s depending on the year. This tool picks a seventh digit that matches the date of birth you selected.'
+  }
+];
+
+usePageSeo({
+  title: 'Danish CPR Number Generator & Validator — Fake Test CPR',
+  description: 'Generate fake Danish CPR numbers (personnummer) that pass the modulus 11 check, or validate an existing CPR-nummer. Pick age, gender and format. Free, browser-based test data for developers.',
+  breadcrumb: 'Denmark',
+  faq
 });
 </script>
