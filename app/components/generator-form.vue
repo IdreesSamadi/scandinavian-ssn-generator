@@ -145,7 +145,7 @@ const maxAge = 150;
 const todayDate = today(getLocalTimeZone());
 const maxDate = new CalendarDate(todayDate.year, todayDate.month, todayDate.day);
 const minDate = new CalendarDate(todayDate.year - maxAge, todayDate.month, todayDate.day);
-const dateOfBirth = shallowRef(new CalendarDate(2022, 2, 3));
+const dateOfBirth = shallowRef(new CalendarDate(1976, 2, 3));
 const inputDate = useTemplateRef('inputDate');
 
 watch(age, (newAge) => {
