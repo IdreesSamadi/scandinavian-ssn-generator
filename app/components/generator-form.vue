@@ -137,7 +137,6 @@ const { formats, segments, isValid = true } = defineProps<{
   isValid?: boolean;
 }>();
 
-const age = ref(1);
 const gender = ref<'Male' | 'Female'>('Male');
 
 const minAge = 1;
@@ -146,17 +145,22 @@ const todayDate = today(getLocalTimeZone());
 const maxDate = new CalendarDate(todayDate.year, todayDate.month, todayDate.day);
 const minDate = new CalendarDate(todayDate.year - maxAge, todayDate.month, todayDate.day);
 const dateOfBirth = shallowRef(new CalendarDate(1976, 2, 3));
+// Start in sync with dateOfBirth: an age change queued during setup would
+// fire after the onMounted randomize and overwrite the random date
+const age = ref(today('Europe/Stockholm').year - dateOfBirth.value.year);
 const inputDate = useTemplateRef('inputDate');
 
 watch(age, (newAge) => {
   const td = today('Europe/Stockholm');
+  // Age was derived from the current date — don't clobber its month/day
+  if (td.year - dateOfBirth.value.year === newAge) return;
   dateOfBirth.value = new CalendarDate(td.year - newAge, td.month, td.day);
 });
 
 watch(dateOfBirth, (newDate) => {
   const td = today('Europe/Stockholm');
   age.value = td.year - newDate.year;
-}, { immediate: true });
+});
 
 watch([format, gender, age, dateOfBirth], () => {
   emit('change', {
@@ -174,6 +178,8 @@ const randomizeInputs = () => {
   dateOfBirth.value = new CalendarDate(randomYear, randomMonth, randomDay);
   gender.value = Math.random() < 0.5 ? 'Male' : 'Female';
 };
+
+onMounted(randomizeInputs);
 </script>
 
 <style>
